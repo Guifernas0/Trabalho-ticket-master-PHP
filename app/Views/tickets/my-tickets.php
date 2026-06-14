@@ -22,7 +22,7 @@
 
                         <form method="POST" action="/tickets/cancel/<?= $t['id'] ?>"
                               onsubmit="return confirm('Cancelar este ingresso?')">
-                            <?= \App\Core\Csrf::field() ?>
+                            <?= $csrf_field ?>
                             <button type="submit" class="btn btn-danger btn-sm">Cancelar Ingresso</button>
                         </form>
                     </div>

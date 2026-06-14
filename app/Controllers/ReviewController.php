@@ -35,6 +35,10 @@ class ReviewController extends Controller
         $rating  = (int) ($_POST['rating']   ?? 3);
         $comment = trim($_POST['comment']    ?? '');
 
+        if ($movieId <= 0) {
+            $this->redirect('/movies');
+        }
+
         $model = new Review();
         $model->store($userId, $movieId, $rating, $comment);
 

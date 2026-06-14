@@ -20,7 +20,7 @@
             <label>Comentário</label>
             <textarea name="comment" rows="5" placeholder="O que você achou do filme?"></textarea>
 
-            <button type="submit">Enviar Avaliação</button>
+            <button type="submit" class="btn">Enviar Avaliação</button>
         </form>
     </div>
 </section>

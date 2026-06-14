@@ -58,7 +58,7 @@
                     <?php if (\App\Core\Session::get('user_id') == $av['user_id']): ?>
                         <form method="POST" action="/reviews/delete/<?= $av['id'] ?>"
                               onsubmit="return confirm('Remover avaliação?')">
-                            <?= \App\Core\Csrf::field() ?>
+                            <?= $csrf_field ?>
                             <button type="submit" class="btn btn-danger btn-sm">Remover</button>
                         </form>
                     <?php endif; ?>

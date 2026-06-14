@@ -21,7 +21,7 @@ class Router
         $uri = strtok($uri, '?');
 
         foreach ($this->routes[$method] ?? [] as $route => $handler) {
-            $pattern = preg_replace('/\{([a-z_]+)\}/', '(?P<$1>[^/]+)', $route);
+            $pattern = preg_replace('/\{([a-zA-Z_]+)\}/', '(?P<$1>[^/]+)', $route);
             $pattern = "#^{$pattern}$#";
 
             if (preg_match($pattern, $uri, $matches)) {

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Csrf;
 use App\Models\Movie;
 use App\Models\Review;
 use App\Models\CinemaSession;
@@ -38,7 +39,8 @@ class MovieController extends Controller
         $avaliacoes = $reviewModel->findByMovie((int) $id);
         $media      = $reviewModel->averageByMovie((int) $id);
         $sessoes    = $sessionModel->findByMovie((int) $id);
+        $csrf_field = Csrf::field();
 
-        $this->render('movies.show', compact('filme', 'avaliacoes', 'media', 'sessoes'));
+        $this->render('movies.show', compact('filme', 'avaliacoes', 'media', 'sessoes', 'csrf_field'));
     }
 }

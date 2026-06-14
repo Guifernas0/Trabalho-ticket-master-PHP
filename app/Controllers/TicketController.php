@@ -58,8 +58,9 @@ class TicketController extends Controller
         $userId      = Session::get('user_id');
         $ticketModel = new Ticket();
         $ingressos   = $ticketModel->findByUser($userId);
+        $csrf_field  = Csrf::field();
 
-        $this->render('tickets.my-tickets', compact('ingressos'));
+        $this->render('tickets.my-tickets', compact('ingressos', 'csrf_field'));
     }
 
     public function cancel(string $id): void
