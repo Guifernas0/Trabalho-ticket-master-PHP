@@ -2,6 +2,14 @@
 
 define('ROOT', dirname(__DIR__));
 
+// Base URL para assets e links (funciona em / ou em /ticketmaster/public/)
+$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+define('BASE_URL', $scriptDir);
+
+function url(string $path = ''): string {
+    return BASE_URL . $path;
+}
+
 // Serve arquivos estáticos diretamente no servidor embutido do PHP
 if (php_sapi_name() === 'cli-server') {
     $file = __DIR__ . $_SERVER['REQUEST_URI'];
@@ -58,6 +66,14 @@ $router->get('/reviews/form/{movieId}',   'ReviewController@form');
 $router->post('/reviews',                 'ReviewController@store');
 $router->post('/reviews/delete/{id}',     'ReviewController@delete');
 
-$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+// Remove o prefixo do subdiretório da URI (ex: /ticketmaster/public → /)
+$uri = $_SERVER['REQUEST_URI'];
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+if ($base !== '' && strpos($uri, $base) === 0) {
+    $uri = substr($uri, strlen($base));
+}
+$uri = $uri ?: '/';
+
+$router->dispatch($_SERVER['REQUEST_METHOD'], $uri);
 
 ?>

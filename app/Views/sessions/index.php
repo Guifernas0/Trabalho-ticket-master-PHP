@@ -18,9 +18,9 @@
                         <p><strong>Preço:</strong> R$ <?= number_format($s['price'], 2, ',', '.') ?></p>
                         <p><strong>Lugares:</strong> <?= $s['available_seats'] ?> disponíveis</p>
                         <div class="session-actions">
-                            <a href="/sessions/<?= $s['id'] ?>" class="btn btn-outline btn-sm">Detalhes</a>
+                            <a href="<?= url('/sessions/' . $s['id']) ?>" class="btn btn-outline btn-sm">Detalhes</a>
                             <?php if ($s['available_seats'] > 0): ?>
-                                <a href="/tickets/buy/<?= $s['id'] ?>" class="btn btn-sm">Comprar</a>
+                                <a href="<?= url('/tickets/buy/' . $s['id']) ?>" class="btn btn-sm">Comprar</a>
                             <?php else: ?>
                                 <span class="badge badge-danger">Esgotado</span>
                             <?php endif; ?>

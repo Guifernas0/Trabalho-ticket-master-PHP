@@ -10,7 +10,7 @@
             <p><strong>Lugares disponíveis:</strong> <?= $sessao['available_seats'] ?></p>
         </div>
 
-        <form method="POST" action="/tickets/buy">
+        <form method="POST" action="<?= url('/tickets/buy') ?>">
             <?= $csrf_field ?>
             <input type="hidden" name="session_id" value="<?= $sessao['id'] ?>">
 
@@ -20,6 +20,6 @@
             <button type="submit" class="btn" style="margin-top:16px;">Confirmar Compra</button>
         </form>
 
-        <p style="margin-top:12px;"><a href="/sessions/<?= $sessao['id'] ?>">Cancelar</a></p>
+        <p style="margin-top:12px;"><a href="<?= url('/sessions/' . $sessao['id']) ?>">Cancelar</a></p>
     </div>
 </section>

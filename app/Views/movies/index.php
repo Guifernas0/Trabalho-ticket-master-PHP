@@ -1,12 +1,12 @@
 <section class="container">
     <h2>Filmes em Cartaz</h2>
 
-    <form class="search-form" method="GET" action="/movies">
+    <form class="search-form" method="GET" action="<?= url('/movies') ?>">
         <input type="text" name="busca" placeholder="Buscar por título ou gênero..."
                value="<?= htmlspecialchars($busca) ?>">
         <button type="submit" class="btn">Buscar</button>
         <?php if ($busca): ?>
-            <a href="/movies" class="btn btn-outline">Limpar</a>
+            <a href="<?= url('/movies') ?>" class="btn btn-outline">Limpar</a>
         <?php endif; ?>
     </form>
 
@@ -25,7 +25,7 @@
                         <h4><?= htmlspecialchars($f['title']) ?></h4>
                         <span class="badge"><?= htmlspecialchars($f['genre'] ?? '') ?></span>
                         <p><?= (int)($f['duration_min'] ?? 0) ?> min</p>
-                        <a href="/movies/<?= $f['id'] ?>" class="btn btn-sm">Ver Detalhes</a>
+                        <a href="<?= url('/movies/' . $f['id']) ?>" class="btn btn-sm">Ver Detalhes</a>
                     </div>
                 </div>
             <?php endforeach; ?>

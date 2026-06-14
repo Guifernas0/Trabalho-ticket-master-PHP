@@ -3,7 +3,7 @@
 
     <?php if (empty($ingressos)): ?>
         <p class="empty-msg">Você ainda não comprou nenhum ingresso.</p>
-        <a href="/sessions" class="btn">Ver Sessões</a>
+        <a href="<?= url('/sessions') ?>" class="btn">Ver Sessões</a>
     <?php else: ?>
         <div class="tickets-list">
             <?php foreach ($ingressos as $t): ?>
@@ -20,7 +20,7 @@
                         <p><strong>Preço pago:</strong> R$ <?= number_format($t['price'], 2, ',', '.') ?></p>
                         <p><strong>Comprado em:</strong> <?= date('d/m/Y H:i', strtotime($t['purchased_at'])) ?></p>
 
-                        <form method="POST" action="/tickets/cancel/<?= $t['id'] ?>"
+                        <form method="POST" action="<?= url('/tickets/cancel/' . $t['id']) ?>"
                               onsubmit="return confirm('Cancelar este ingresso?')">
                             <?= $csrf_field ?>
                             <button type="submit" class="btn btn-danger btn-sm">Cancelar Ingresso</button>

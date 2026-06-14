@@ -7,7 +7,7 @@
         <p class="mensagem"><?php echo $mensagem; ?></p>
     <?php endif; ?>
 
-    <form method="POST" action="/register">
+    <form method="POST" action="<?= url('/register') ?>">
 
         <label>Nome</label>
         <input type="text" name="name" required>
@@ -24,7 +24,7 @@
 
     <p>
         Já possui conta?
-        <a href="/login">Entrar</a>
+        <a href="<?= url('/login') ?>">Entrar</a>
     </p>
 
 </div>

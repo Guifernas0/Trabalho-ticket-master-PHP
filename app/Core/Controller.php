@@ -19,8 +19,9 @@ abstract class Controller
         require ROOT . '/app/Views/layouts/footer.php';
     }
 
-    protected function redirect(string $url): void
+    protected function redirect(string $path): void
     {
+        $url = (str_starts_with($path, 'http') ? $path : BASE_URL . $path);
         header("Location: {$url}");
         exit;
     }

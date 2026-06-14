@@ -1,5 +1,5 @@
 <section class="container">
-    <a href="/movies" class="back-link">← Voltar para Filmes</a>
+    <a href="<?= url('/movies') ?>" class="back-link">← Voltar para Filmes</a>
 
     <div class="movie-detail">
         <?php if (!empty($filme['poster_url'])): ?>
@@ -26,7 +26,7 @@
                             — Sala <?= htmlspecialchars($s['room']) ?>
                             — R$ <?= number_format($s['price'], 2, ',', '.') ?>
                             — <?= $s['available_seats'] ?> lugar(es)
-                            <a href="/tickets/buy/<?= $s['id'] ?>" class="btn btn-sm">Comprar</a>
+                            <a href="<?= url('/tickets/buy/' . $s['id']) ?>" class="btn btn-sm">Comprar</a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -34,7 +34,7 @@
                 <p class="empty-msg">Sem sessões disponíveis no momento.</p>
             <?php endif; ?>
 
-            <a href="/reviews/form/<?= $filme['id'] ?>" class="btn" style="margin-top:16px;">
+            <a href="<?= url('/reviews/form/' . $filme['id']) ?>" class="btn" style="margin-top:16px;">
                 Avaliar este filme
             </a>
         </div>
@@ -56,7 +56,7 @@
                     </div>
                     <p><?= nl2br(htmlspecialchars($av['comment'])) ?></p>
                     <?php if (\App\Core\Session::get('user_id') == $av['user_id']): ?>
-                        <form method="POST" action="/reviews/delete/<?= $av['id'] ?>"
+                        <form method="POST" action="<?= url('/reviews/delete/' . $av['id']) ?>"
                               onsubmit="return confirm('Remover avaliação?')">
                             <?= $csrf_field ?>
                             <button type="submit" class="btn btn-danger btn-sm">Remover</button>

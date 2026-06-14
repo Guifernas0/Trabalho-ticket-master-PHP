@@ -1,5 +1,5 @@
 <section class="container">
-    <a href="/sessions" class="back-link">← Voltar para Sessões</a>
+    <a href="<?= url('/sessions') ?>" class="back-link">← Voltar para Sessões</a>
 
     <div class="movie-detail">
         <?php if (!empty($sessao['poster_url'])): ?>
@@ -23,7 +23,7 @@
             <p><strong>Lugares disponíveis:</strong> <?= $sessao['available_seats'] ?> / <?= $sessao['total_seats'] ?></p>
 
             <?php if ($sessao['available_seats'] > 0): ?>
-                <a href="/tickets/buy/<?= $sessao['id'] ?>" class="btn" style="margin-top:16px;">
+                <a href="<?= url('/tickets/buy/' . $sessao['id']) ?>" class="btn" style="margin-top:16px;">
                     Comprar Ingresso
                 </a>
             <?php else: ?>

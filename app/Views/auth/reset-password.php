@@ -7,7 +7,7 @@
         <p class="mensagem"><?php echo $mensagem; ?></p>
     <?php endif; ?>
 
-    <form method="POST" action="/reset-password">
+    <form method="POST" action="<?= url('/reset-password') ?>">
 
         <label>E-mail</label>
         <input type="email" name="email" required>
@@ -17,7 +17,7 @@
     </form>
 
     <p>
-        <a href="/login">Voltar para Login</a>
+        <a href="<?= url('/login') ?>">Voltar para Login</a>
     </p>
 
 </div>

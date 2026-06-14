@@ -18,11 +18,14 @@ class Router
 
     public function dispatch(string $method, string $uri): void
     {
+        // Remove query string e normaliza a URI
         $uri = strtok($uri, '?');
+        $uri = '/' . trim($uri, '/');
+        if ($uri === '//') $uri = '/';
 
         foreach ($this->routes[$method] ?? [] as $route => $handler) {
             $pattern = preg_replace('/\{([a-zA-Z_]+)\}/', '(?P<$1>[^/]+)', $route);
-            $pattern = "#^{$pattern}$#";
+            $pattern = "#^{$pattern}/?$#";
 
             if (preg_match($pattern, $uri, $matches)) {
                 [$controllerName, $methodName] = explode('@', $handler);

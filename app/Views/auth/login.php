@@ -7,7 +7,7 @@
         <p class="mensagem"><?php echo $mensagem; ?></p>
     <?php endif; ?>
 
-    <form method="POST" action="/login">
+    <form method="POST" action="<?= url('/login') ?>">
 
         <label>E-mail</label>
         <input type="email" name="email" required>
@@ -21,11 +21,11 @@
 
     <p>
         Não possui conta?
-        <a href="/register">Cadastre-se</a>
+        <a href="<?= url('/register') ?>">Cadastre-se</a>
     </p>
 
     <p>
-        <a href="/reset-password">Esqueci minha senha</a>
+        <a href="<?= url('/reset-password') ?>">Esqueci minha senha</a>
     </p>
 
 </div>

@@ -6,7 +6,7 @@
             <p class="mensagem"><?= htmlspecialchars($mensagem) ?></p>
         <?php endif; ?>
 
-        <form method="POST" action="/contact">
+        <form method="POST" action="<?= url('/contact') ?>">
             <?= $csrf_field ?>
 
             <label>Nome</label>

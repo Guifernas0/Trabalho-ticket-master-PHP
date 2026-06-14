@@ -2,8 +2,8 @@
     <div class="hero-content">
         <h2>Bem-vindo ao TicketMaster 🎬</h2>
         <p>Compre seus ingressos de cinema com facilidade e rapidez.</p>
-        <a href="/movies" class="btn">Ver Filmes</a>
-        <a href="/sessions" class="btn btn-outline">Ver Sessões</a>
+        <a href="<?= url('/movies') ?>" class="btn">Ver Filmes</a>
+        <a href="<?= url('/sessions') ?>" class="btn btn-outline">Ver Sessões</a>
     </div>
 </section>
 
@@ -24,7 +24,7 @@
                     <div class="movie-info">
                         <h4><?= htmlspecialchars($filme['title']) ?></h4>
                         <p><?= htmlspecialchars($filme['genre'] ?? '') ?></p>
-                        <a href="/movies/<?= $filme['id'] ?>" class="btn btn-sm">Ver Detalhes</a>
+                        <a href="<?= url('/movies/' . $filme['id']) ?>" class="btn btn-sm">Ver Detalhes</a>
                     </div>
                 </div>
             <?php endforeach; ?>

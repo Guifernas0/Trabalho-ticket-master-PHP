@@ -1,10 +1,10 @@
 <section class="container page-content">
     <div class="card" style="max-width:520px; margin:0 auto;">
-        <a href="/movies/<?= $filme['id'] ?>" class="back-link">← Voltar para o Filme</a>
+        <a href="<?= url('/movies/' . $filme['id']) ?>" class="back-link">← Voltar para o Filme</a>
 
         <h2>Avaliar: <?= htmlspecialchars($filme['title']) ?></h2>
 
-        <form method="POST" action="/reviews">
+        <form method="POST" action="<?= url('/reviews') ?>">
             <?= $csrf_field ?>
             <input type="hidden" name="movie_id" value="<?= $filme['id'] ?>">
 
