@@ -1,3 +1,4 @@
+<div class="auth-wrapper">
 <div class="card">
 
     <h2>Recuperar Senha</h2>
@@ -19,4 +20,5 @@
         <a href="/login">Voltar para Login</a>
     </p>
 
+</div>
 </div>

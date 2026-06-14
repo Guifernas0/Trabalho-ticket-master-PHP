@@ -9,15 +9,23 @@
 <body>
 
 <header>
-    <h1>🎟️ TicketMaster</h1>
-    <nav>
-        <a href="/movies">Filmes</a>
-        <a href="/sessions">Sessões</a>
-        <a href="/tickets">Meus Ingressos</a>
-        <a href="/login">Login</a>
-        <a href="/register">Cadastro</a>
-        <a href="/logout">Sair</a>
-    </nav>
+    <div class="header-inner">
+        <a href="/" class="logo">🎟️ TicketMaster</a>
+        <nav>
+            <a href="/">Início</a>
+            <a href="/movies">Filmes</a>
+            <a href="/sessions">Sessões</a>
+            <a href="/about">Sobre</a>
+            <a href="/contact">Contato</a>
+            <?php if (\App\Core\Session::has('user_id')): ?>
+                <a href="/tickets">Meus Ingressos</a>
+                <a href="/logout" class="btn-nav">Sair</a>
+            <?php else: ?>
+                <a href="/login" class="btn-nav">Entrar</a>
+                <a href="/register" class="btn-nav btn-nav-outline">Cadastrar</a>
+            <?php endif; ?>
+        </nav>
+    </div>
 </header>
 
 <main>

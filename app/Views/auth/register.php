@@ -1,3 +1,4 @@
+<div class="auth-wrapper">
 <div class="card">
 
     <h2>Cadastro</h2>
@@ -26,4 +27,5 @@
         <a href="/login">Entrar</a>
     </p>
 
+</div>
 </div>

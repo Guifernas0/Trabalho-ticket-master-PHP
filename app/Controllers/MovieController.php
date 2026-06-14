@@ -1,103 +1,44 @@
 <?php
 
-require_once __DIR__ . "/../Models/Movie.php";
-require_once __DIR__ . "/../Models/Review.php";
+namespace App\Controllers;
 
-class MovieController {
+use App\Core\Controller;
+use App\Models\Movie;
+use App\Models\Review;
+use App\Models\CinemaSession;
 
-    public static function index(){
+class MovieController extends Controller
+{
+    public function index(): void
+    {
+        $movieModel = new Movie();
+        $busca      = trim($_GET['busca'] ?? '');
 
-        $busca = $_GET['busca'] ?? null;
-        $filmes = Movie::listar($busca);
+        $filmes = $busca
+            ? $movieModel->search($busca)
+            : $movieModel->findAllOrdered();
 
-        require __DIR__ . "/../Views/movies/index.php";
+        $this->render('movies.index', compact('filmes', 'busca'));
     }
 
-    public static function show(){
+    public function show(string $id): void
+    {
+        $movieModel   = new Movie();
+        $reviewModel  = new Review();
+        $sessionModel = new CinemaSession();
 
-        $id = $_GET['id'] ?? null;
+        $filme = $movieModel->findById((int) $id);
 
-        if(is_null($id)){
-            echo "Filme nao encontrado";
+        if (!$filme) {
+            http_response_code(404);
+            echo "<h1>Filme não encontrado.</h1>";
             return;
         }
 
-        $filme = Movie::buscarPorId($id);
+        $avaliacoes = $reviewModel->findByMovie((int) $id);
+        $media      = $reviewModel->averageByMovie((int) $id);
+        $sessoes    = $sessionModel->findByMovie((int) $id);
 
-        if(is_null($filme)){
-            echo "Filme nao encontrado";
-            return;
-        }
-
-        $avaliacoes = Review::listarPorFilme($id);
-        $media = Review::mediaPorFilme($id);
-
-        require __DIR__ . "/../Views/movies/show.php";
+        $this->render('movies.show', compact('filme', 'avaliacoes', 'media', 'sessoes'));
     }
-
-    public static function salvar(){
-
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-
-            $titulo = $_POST['title'] ?? null;
-            $descricao = $_POST['description'] ?? null;
-            $genero = $_POST['genre'] ?? null;
-            $duracao = $_POST['duration_min'] ?? null;
-            $poster = $_POST['poster_url'] ?? null;
-
-            if(!is_null($titulo) && !empty($titulo)){
-                Movie::salvar($titulo, $descricao, $genero, $duracao, $poster);
-            }
-        }
-
-        header("Location: ?p=movies");
-    }
-
-    public static function editar(){
-
-        $id = $_GET['id'] ?? null;
-
-        if(is_null($id)){
-            header("Location: ?p=movies");
-            return;
-        }
-
-        $filme = Movie::buscarPorId($id);
-        $filmes = Movie::listar();
-
-        require __DIR__ . "/../Views/movies/index.php";
-    }
-
-    public static function atualizar(){
-
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-
-            $id = $_POST['id'] ?? null;
-            $titulo = $_POST['title'] ?? null;
-            $descricao = $_POST['description'] ?? null;
-            $genero = $_POST['genre'] ?? null;
-            $duracao = $_POST['duration_min'] ?? null;
-            $poster = $_POST['poster_url'] ?? null;
-
-            if(!is_null($id) && !is_null($titulo) && !empty($titulo)){
-                Movie::atualizar($id, $titulo, $descricao, $genero, $duracao, $poster);
-            }
-        }
-
-        header("Location: ?p=movies");
-    }
-
-    public static function apagar(){
-
-        $id = $_GET['id'] ?? null;
-
-        if(!is_null($id)){
-            Movie::apagar($id);
-        }
-
-        header("Location: ?p=movies");
-    }
-
 }
-
-?>

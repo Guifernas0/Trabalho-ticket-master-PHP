@@ -1,93 +1,61 @@
 <?php
 
-require_once __DIR__ . "/../Models/Review.php";
+namespace App\Controllers;
 
-class ReviewController {
+use App\Core\Controller;
+use App\Core\Session;
+use App\Core\Csrf;
+use App\Models\Review;
+use App\Models\Movie;
 
-    public static function salvar(){
+class ReviewController extends Controller
+{
+    public function form(string $movieId): void
+    {
+        $this->requireAuth();
 
-        session_start();
+        $movieModel = new Movie();
+        $filme      = $movieModel->findById((int) $movieId);
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-
-            $idUsuario = $_SESSION['id'] ?? $_SESSION['user_id'] ?? 1;
-            $idFilme = $_POST['movie_id'] ?? null;
-            $nota = $_POST['rating'] ?? null;
-            $comentario = $_POST['comment'] ?? null;
-
-            if(!is_null($idFilme) && !is_null($nota)){
-                Review::salvar($idUsuario, $idFilme, $nota, $comentario);
-                header("Location: ?p=movie-show&id=$idFilme");
-                return;
-            }
+        if (!$filme) {
+            $this->redirect('/movies');
         }
 
-        header("Location: ?p=movies");
+        $csrf_field = Csrf::field();
+        $this->render('reviews.form', compact('filme', 'csrf_field'));
     }
 
-    public static function form(){
+    public function store(): void
+    {
+        $this->requireAuth();
+        Csrf::check();
 
-        session_start();
+        $userId  = Session::get('user_id');
+        $movieId = (int) ($_POST['movie_id'] ?? 0);
+        $rating  = (int) ($_POST['rating']   ?? 3);
+        $comment = trim($_POST['comment']    ?? '');
 
-        $id = $_GET['id'] ?? null;
-        $idUsuario = $_SESSION['id'] ?? $_SESSION['user_id'] ?? 1;
+        $model = new Review();
+        $model->store($userId, $movieId, $rating, $comment);
 
-        if(is_null($id)){
-            header("Location: ?p=movies");
-            return;
-        }
-
-        $avaliacao = Review::buscarPorId($id);
-
-        if(is_null($avaliacao) || $avaliacao->user_id != $idUsuario){
-            echo "Avaliacao nao encontrada";
-            return;
-        }
-
-        require __DIR__ . "/../Views/reviews/form.php";
+        $this->redirect("/movies/{$movieId}");
     }
 
-    public static function atualizar(){
+    public function delete(string $id): void
+    {
+        $this->requireAuth();
+        Csrf::check();
 
-        session_start();
+        $userId = Session::get('user_id');
+        $model  = new Review();
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $review = $model->findById((int) $id);
 
-            $idUsuario = $_SESSION['id'] ?? $_SESSION['user_id'] ?? 1;
-            $id = $_POST['id'] ?? null;
-            $nota = $_POST['rating'] ?? null;
-            $comentario = $_POST['comment'] ?? null;
-
-            $avaliacao = Review::buscarPorId($id);
-
-            if(!is_null($avaliacao) && $avaliacao->user_id == $idUsuario){
-                Review::atualizar($id, $nota, $comentario);
-                header("Location: ?p=movie-show&id=$avaliacao->movie_id");
-                return;
-            }
+        if ($review && $model->belongsToUser((int) $id, $userId)) {
+            $model->delete((int) $id);
+            $this->redirect("/movies/{$review['movie_id']}");
+        } else {
+            $this->redirect('/movies');
         }
-
-        header("Location: ?p=movies");
     }
-
-    public static function apagar(){
-
-        session_start();
-
-        $id = $_GET['id'] ?? null;
-        $idUsuario = $_SESSION['id'] ?? $_SESSION['user_id'] ?? 1;
-
-        $avaliacao = Review::buscarPorId($id);
-
-        if(!is_null($avaliacao) && $avaliacao->user_id == $idUsuario){
-            Review::apagar($id);
-            header("Location: ?p=movie-show&id=$avaliacao->movie_id");
-            return;
-        }
-
-        header("Location: ?p=movies");
-    }
-
 }
-
-?>

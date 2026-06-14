@@ -2,6 +2,14 @@
 
 define('ROOT', dirname(__DIR__));
 
+// Serve arquivos estáticos diretamente no servidor embutido do PHP
+if (php_sapi_name() === 'cli-server') {
+    $file = __DIR__ . $_SERVER['REQUEST_URI'];
+    if (is_file($file)) {
+        return false;
+    }
+}
+
 spl_autoload_register(function (string $class) {
     $path = ROOT . '/' . str_replace(['App\\', '\\'], ['app/', '/'], $class) . '.php';
     if (file_exists($path)) {

@@ -1,123 +1,57 @@
 <?php
 
-class Review {
+namespace App\Models;
 
-    private static function conectar(){
+use App\Core\Model;
 
-        $config = require __DIR__ . "/../../config/database.php";
+class Review extends Model
+{
+    protected string $table = 'reviews';
 
-        $banco = new mysqli(
-            $config['host'],
-            $config['username'],
-            $config['password'],
-            $config['dbname']
+    public function findByMovie(int $movieId): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT reviews.*, users.name AS nome_usuario
+             FROM reviews
+             INNER JOIN users ON users.id = reviews.user_id
+             WHERE reviews.movie_id = :mid
+             ORDER BY reviews.id DESC"
         );
-
-        if($banco->connect_error){
-            die("Erro na conexao: " . $banco->connect_error);
-        }
-
-        $banco->set_charset($config['charset']);
-
-        return $banco;
+        $stmt->execute([':mid' => $movieId]);
+        return $stmt->fetchAll();
     }
 
-    public static function listarPorFilme($idFilme){
-
-        $banco = self::conectar();
-        $idFilme = (int) $idFilme;
-
-        $resp = $banco->query("SELECT reviews.*, users.name AS nome_usuario
-                                FROM reviews
-                                INNER JOIN users ON users.id = reviews.user_id
-                                WHERE reviews.movie_id='$idFilme'
-                                ORDER BY reviews.id DESC");
-
-        $avaliacoes = [];
-
-        while($obj = $resp->fetch_object()){
-            $avaliacoes[] = $obj;
-        }
-
-        return $avaliacoes;
+    public function averageByMovie(int $movieId): ?float
+    {
+        $stmt = $this->db->prepare(
+            "SELECT AVG(rating) AS media FROM reviews WHERE movie_id = :mid"
+        );
+        $stmt->execute([':mid' => $movieId]);
+        $row = $stmt->fetch();
+        return $row['media'] !== null ? (float) $row['media'] : null;
     }
 
-    public static function buscarPorId($id){
-
-        $banco = self::conectar();
-        $id = (int) $id;
-
-        $resp = $banco->query("SELECT * FROM reviews WHERE id='$id'");
-
-        if($resp->num_rows <= 0){
-            return null;
-        }
-
-        return $resp->fetch_object();
+    public function store(int $userId, int $movieId, int $rating, string $comment): bool
+    {
+        $rating = max(1, min(5, $rating));
+        $stmt = $this->db->prepare(
+            "INSERT INTO reviews (user_id, movie_id, rating, comment)
+             VALUES (:uid, :mid, :rating, :comment)"
+        );
+        return $stmt->execute([
+            ':uid'     => $userId,
+            ':mid'     => $movieId,
+            ':rating'  => $rating,
+            ':comment' => $comment,
+        ]);
     }
 
-    public static function salvar($idUsuario, $idFilme, $nota, $comentario){
-
-        $banco = self::conectar();
-
-        $idUsuario = (int) $idUsuario;
-        $idFilme = (int) $idFilme;
-        $nota = (int) $nota;
-        $comentario = $banco->real_escape_string($comentario);
-
-        if($nota < 1){
-            $nota = 1;
-        }
-
-        if($nota > 5){
-            $nota = 5;
-        }
-
-        $banco->query("INSERT INTO reviews (id, user_id, movie_id, rating, comment)
-                        VALUES (NULL, '$idUsuario', '$idFilme', '$nota', '$comentario')");
+    public function belongsToUser(int $id, int $userId): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT id FROM reviews WHERE id = :id AND user_id = :uid"
+        );
+        $stmt->execute([':id' => $id, ':uid' => $userId]);
+        return (bool) $stmt->fetch();
     }
-
-    public static function atualizar($id, $nota, $comentario){
-
-        $banco = self::conectar();
-
-        $id = (int) $id;
-        $nota = (int) $nota;
-        $comentario = $banco->real_escape_string($comentario);
-
-        if($nota < 1){
-            $nota = 1;
-        }
-
-        if($nota > 5){
-            $nota = 5;
-        }
-
-        $banco->query("UPDATE reviews SET
-                            rating='$nota',
-                            comment='$comentario'
-                        WHERE id='$id'");
-    }
-
-    public static function apagar($id){
-
-        $banco = self::conectar();
-        $id = (int) $id;
-
-        $banco->query("DELETE FROM reviews WHERE id='$id'");
-    }
-
-    public static function mediaPorFilme($idFilme){
-
-        $banco = self::conectar();
-        $idFilme = (int) $idFilme;
-
-        $resp = $banco->query("SELECT AVG(rating) AS media FROM reviews WHERE movie_id='$idFilme'");
-        $obj = $resp->fetch_object();
-
-        return $obj->media;
-    }
-
 }
-
-?>

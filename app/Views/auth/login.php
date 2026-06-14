@@ -1,3 +1,4 @@
+<div class="auth-wrapper">
 <div class="card">
 
     <h2>Login</h2>
@@ -27,4 +28,5 @@
         <a href="/reset-password">Esqueci minha senha</a>
     </p>
 
+</div>
 </div>

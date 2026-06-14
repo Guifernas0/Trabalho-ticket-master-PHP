@@ -1,106 +1,42 @@
 <?php
 
-class Movie {
+namespace App\Models;
 
-    private static function conectar(){
+use App\Core\Model;
 
-        $config = require __DIR__ . "/../../config/database.php";
+class Movie extends Model
+{
+    protected string $table = 'movies';
 
-        $banco = new mysqli(
-            $config['host'],
-            $config['username'],
-            $config['password'],
-            $config['dbname']
+    public function search(string $busca): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM movies
+             WHERE title LIKE :b OR genre LIKE :b
+             ORDER BY id DESC"
         );
-
-        if($banco->connect_error){
-            die("Erro na conexao: " . $banco->connect_error);
-        }
-
-        $banco->set_charset($config['charset']);
-
-        return $banco;
+        $stmt->execute([':b' => "%{$busca}%"]);
+        return $stmt->fetchAll();
     }
 
-    public static function listar($busca = null){
-
-        $banco = self::conectar();
-
-        if(!is_null($busca) && !empty($busca)){
-            $busca = $banco->real_escape_string($busca);
-            $resp = $banco->query("SELECT * FROM movies
-                                    WHERE title LIKE '%$busca%'
-                                       OR genre LIKE '%$busca%'
-                                    ORDER BY id DESC");
-        }else{
-            $resp = $banco->query("SELECT * FROM movies ORDER BY id DESC");
-        }
-
-        $filmes = [];
-
-        while($obj = $resp->fetch_object()){
-            $filmes[] = $obj;
-        }
-
-        return $filmes;
+    public function findAllOrdered(): array
+    {
+        $stmt = $this->db->query("SELECT * FROM movies ORDER BY id DESC");
+        return $stmt->fetchAll();
     }
 
-    public static function buscarPorId($id){
-
-        $banco = self::conectar();
-        $id = (int) $id;
-
-        $resp = $banco->query("SELECT * FROM movies WHERE id='$id'");
-
-        if($resp->num_rows <= 0){
-            return null;
-        }
-
-        return $resp->fetch_object();
+    public function create(string $title, ?string $description, ?string $genre, ?int $duration, ?string $poster): bool
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO movies (title, description, genre, duration_min, poster_url)
+             VALUES (:title, :description, :genre, :duration, :poster)"
+        );
+        return $stmt->execute([
+            ':title'       => $title,
+            ':description' => $description,
+            ':genre'       => $genre,
+            ':duration'    => $duration,
+            ':poster'      => $poster,
+        ]);
     }
-
-    public static function salvar($titulo, $descricao, $genero, $duracao, $poster){
-
-        $banco = self::conectar();
-
-        $titulo = $banco->real_escape_string($titulo);
-        $descricao = $banco->real_escape_string($descricao);
-        $genero = $banco->real_escape_string($genero);
-        $duracao = (int) $duracao;
-        $poster = $banco->real_escape_string($poster);
-
-        $banco->query("INSERT INTO movies (id, title, description, genre, duration_min, poster_url)
-                        VALUES (NULL, '$titulo', '$descricao', '$genero', '$duracao', '$poster')");
-    }
-
-    public static function atualizar($id, $titulo, $descricao, $genero, $duracao, $poster){
-
-        $banco = self::conectar();
-
-        $id = (int) $id;
-        $titulo = $banco->real_escape_string($titulo);
-        $descricao = $banco->real_escape_string($descricao);
-        $genero = $banco->real_escape_string($genero);
-        $duracao = (int) $duracao;
-        $poster = $banco->real_escape_string($poster);
-
-        $banco->query("UPDATE movies SET
-                            title='$titulo',
-                            description='$descricao',
-                            genre='$genero',
-                            duration_min='$duracao',
-                            poster_url='$poster'
-                        WHERE id='$id'");
-    }
-
-    public static function apagar($id){
-
-        $banco = self::conectar();
-        $id = (int) $id;
-
-        $banco->query("DELETE FROM movies WHERE id='$id'");
-    }
-
 }
-
-?>
